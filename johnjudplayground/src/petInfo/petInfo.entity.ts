@@ -71,6 +71,9 @@ export class petinfo{
 
     @Column()
     PetAddress: string;
+
+    @Column()
+    GenCode: string;
 }
 
 

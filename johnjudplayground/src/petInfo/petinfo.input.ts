@@ -70,4 +70,7 @@ export class petinfoinput{
     @Field()
     PetAddress: string;
 
+    @Field()
+    GenCode: string;
+
 }

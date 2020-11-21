@@ -102,9 +102,20 @@ export class petInfoService {
     return found;
   }
 
+  //GENCODE################
+  makeid() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  
+    for (var i = 0; i < 6; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  
+    return text;
+  }
+
   async createPetInfo(petinfoinput:petinfoinput, User:User): Promise<object>{
     //console.log(User);
-    const { petid,PetName,PetBreed,PetGender,Type,PetPicURL,DelPicURL,PetStatus,PetLength,PetHeight, PetCerURL,TimeStampUpdate, UserId,AdopUserId,CodePet, CheckCode,TimeUpdate,Describe,PetAddress} = petinfoinput;
+    const { petid,PetName,PetBreed,PetGender,Type,PetPicURL,DelPicURL,PetStatus,PetLength,PetHeight, PetCerURL,TimeStampUpdate, UserId,AdopUserId,CodePet, CheckCode,TimeUpdate,Describe,PetAddress,GenCode} = petinfoinput;
     const newPet = this.petInfoRepository.create({
       petid: uuid()
     });
@@ -131,7 +142,11 @@ export class petInfoService {
     //console.log(User.id);
 
     newPet.AdopUserId = '';
+
+    newPet.GenCode = this.makeid();
     newPet.CodePet = '';
+
+
     newPet.CheckCode = false;
     newPet.TimeUpdate = TimePost;
     newPet.Describe = Describe;
@@ -143,18 +158,24 @@ export class petInfoService {
  
 
   async checkCode(petinfoinput:petinfoinput, User:User): Promise<petinfo>{
-    const {petid,PetName,PetBreed,PetGender,Type,PetPicURL,DelPicURL,PetStatus,PetLength,PetHeight, PetCerURL,TimeStampUpdate, UserId,AdopUserId, CodePet, CheckCode,TimeUpdate,Describe,PetAddress} = petinfoinput;
+    const {petid,PetName,PetBreed,PetGender,Type,PetPicURL,DelPicURL,PetStatus,PetLength,PetHeight, PetCerURL,TimeStampUpdate, UserId,AdopUserId, CodePet, CheckCode,TimeUpdate,Describe,PetAddress,GenCode} = petinfoinput;
     const petinfo = await this.petInfoRepository.findOne({where:{petid}});
     
     if(User.id===petinfo.UserId){
       throw new ConflictException('Can not get your own pet')
     }
-    if (CodePet===petid){
+    if(petinfo.CheckCode==true){
+      throw new ConflictException('This pet was adopted')
+    }
+    if (CodePet===petinfo.GenCode){
       petinfo.CodePet = CodePet;
       petinfo.CheckCode = true;
       petinfo.AdopUserId = User.id;
       petinfo.PetStatus = 'pend';
       //await this.notiSer
+    } 
+    else if (CodePet!==petinfo.GenCode){
+      throw new ConflictException('Your code is not correct')
     }
     await this.petInfoRepository.save(petinfo);
     console.log(petinfo);
@@ -222,6 +243,10 @@ export class petInfoService {
       console.log('this accout is not pet owner')
       throw new ConflictException('You dont have permission to edit this pet')  
     }
+    if (petinfo.PetStatus !== 'ava'){
+      console.log('cannot edit')
+      throw new ConflictException('this pet cannnot edit')  
+    }
     const today = new Date();
     const postday = petinfo.TimeStampUpdate;
     let fromDate = new Date(Date.now() - 60 * 60 * 24 * 2 * 1000);
@@ -235,11 +260,19 @@ export class petInfoService {
     petinfo.PetBreed = PetBreed;
     petinfo.PetGender = PetGender;
     petinfo.Type = Type;
-    petinfo.PetPicURL = PetPicURL;
+
+    if (PetPicURL != null){
+      petinfo.PetPicURL = PetPicURL;
+    }
+  
     petinfo.DelPicURL = DelPicURL;
     petinfo.PetLength = PetLength;
     petinfo.PetHeight = PetHeight;
-    petinfo.PetCerURL = PetCerURL;
+
+    if (PetCerURL != null){
+      petinfo.PetCerURL = PetCerURL;
+    }
+    // petinfo.PetCerURL = PetCerURL;
     petinfo.TimeUpdate = today;
     petinfo.Describe = Describe;
     petinfo.PetAddress = PetAddress;

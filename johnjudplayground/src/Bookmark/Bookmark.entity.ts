@@ -18,4 +18,10 @@ export class bookmark{
 
     @Column()
     UserIdBookmark: string;
+
+    @Column()
+    bmStatus: Boolean;
+
+    @Column()
+    PetName: string;
 }

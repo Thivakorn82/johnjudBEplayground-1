@@ -8,9 +8,18 @@ import { Double } from "mongodb";
 export class createBookmarkInput{
 
     @Field()
+    bmid: string;
+
+    @Field()
     UserId: string;
 
     @Field()
     petid: string;
+
+    @Field()
+    bmStatus: Boolean;
+
+    @Field()
+    PetName: string;
 
 }

@@ -18,4 +18,9 @@ export class bookmarkinput{
     @Field()
     UserIdBookmark: string;
 
+    @Field()
+    bmStatus: Boolean;
+
+    @Field()
+    PetName: string;
 }
