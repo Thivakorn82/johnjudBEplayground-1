@@ -41,7 +41,6 @@ export class UserController {
     }
 
     @Patch(':id/setting/description')
-    @UseGuards(AuthGuard())
     async UpdateUserDes(@Param('id') id: string,
                         @Body('Description') Description: string,
                         @GetUser() User: User
@@ -50,7 +49,6 @@ export class UserController {
     }
 
     @Patch(':id/setting/infosetting')
-    @UseGuards(AuthGuard())
     async UpdateUserInfo(@Param('id') id: string,
                          @Body('FirstName') FirstName: string,
                          @Body('LastName') LastName: string,
