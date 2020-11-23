@@ -125,7 +125,7 @@ export class petInfoService {
     newPet.PetName = PetName;
     newPet.PetBreed = PetBreed;
     newPet.PetGender = PetGender;
-    newPet.Type = Type;
+    newPet.Type = Type.toUpperCase();
     newPet.PetPicURL = PetPicURL;
     newPet.DelPicURL = DelPicURL;
     newPet.PetStatus = 'ava'
